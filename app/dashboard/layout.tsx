@@ -1,4 +1,14 @@
+import { Metadata } from 'next';
 import SideNav from '@/app/ui/dashboard/sidenav';
+
+export const metadata: Metadata = {
+    title: {
+        template: '%s | Acme Dashboard',
+        default: 'Acme Dashboard',
+    },
+    description: 'The official Next.js Learn Dashboard built with App Router.',
+    metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+};
 
 // dashboard 中的页面将自动嵌套在Layout组件中
 export default function Layout({ children }: { children: React.ReactNode }) {
