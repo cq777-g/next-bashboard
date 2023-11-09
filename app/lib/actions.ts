@@ -16,6 +16,7 @@ const InvoiceSchema = z.object({
 
 const CreateInvoice = InvoiceSchema.omit({ id: true, date: true })
 
+// 新建发票
 export async function createInvoice(formData: FormData) {
 
     const { customerId, amount, status } = CreateInvoice.parse({
@@ -32,6 +33,29 @@ export async function createInvoice(formData: FormData) {
         VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
       `;
     // 清除缓存 重定向
+
+    revalidatePath('/dashboard/invoices');
+    redirect('/dashboard/invoices');
+}
+
+// Use Zod to update the expected types
+const UpdateInvoice = InvoiceSchema.omit({ date: true, id: true });
+
+// 修改发票
+export async function updateInvoice(id: string, formData: FormData) {
+    const { customerId, amount, status } = UpdateInvoice.parse({
+        customerId: formData.get('customerId'),
+        amount: formData.get('amount'),
+        status: formData.get('status'),
+    });
+
+    const amountInCents = amount * 100;
+
+    await sql`
+    UPDATE invoices
+    SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+    WHERE id = ${id}
+  `;
 
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
